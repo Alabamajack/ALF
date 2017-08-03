@@ -24,7 +24,7 @@ std::condition_variable Run_ServerWrite_Task;
 std::mutex Run_Main_Task_mut;
 
 ///Alf Log
-Alf_Log my_log;
+Alf_Log log;
 
 ///Shared Memory Mailbox object
 Alf_SharedMemoryComm shared_mem;
@@ -115,7 +115,7 @@ void readData(void) {
 		rec += ", Angle: " + std::to_string(global_drive_command.angle);
 		rec += ", Light: " + std::to_string(global_drive_command.light);
 
-		my_log.alf_log_write(rec, log_info);
+		log.alf_log_write(rec, log_info);
 
 		shared_mem.Write(global_drive_command);
 
@@ -129,7 +129,7 @@ int main()
 	std::unique_lock<std::mutex> lck(Run_Main_Task_mut);
 	signal(SIGINT, Stop_Program);
 
-	my_log.alf_log_init("Melmac.log", log_debug, true);
+	log.alf_log_init("Melmac.log", log_debug, true);
 
 	global_drive_info.speed = 42;
 	global_drive_info.acceleration = 43;

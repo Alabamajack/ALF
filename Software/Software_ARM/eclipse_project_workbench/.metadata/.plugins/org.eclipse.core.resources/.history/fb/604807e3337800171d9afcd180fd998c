@@ -23,8 +23,7 @@ std::condition_variable Run_ServerWrite_Task;
 /// mutex to for the main thread
 std::mutex Run_Main_Task_mut;
 
-///Alf Log
-Alf_Log my_log;
+Alf_Log mylog;
 
 ///Shared Memory Mailbox object
 Alf_SharedMemoryComm shared_mem;
@@ -115,8 +114,10 @@ void readData(void) {
 		rec += ", Angle: " + std::to_string(global_drive_command.angle);
 		rec += ", Light: " + std::to_string(global_drive_command.light);
 
-		my_log.alf_log_write(rec, log_info);
+		mylog.alf_log_write(rec, log_info);
 
+		// Automatisches Fahren
+		global_drive_command.speed=255;
 		shared_mem.Write(global_drive_command);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1/COMFREQ*1000));
@@ -126,11 +127,14 @@ void readData(void) {
 
 int main()
 {
+	printf("Blubber XT Aumato :)\n");
+	Alf_Log::alf_log_write("Blubb_Alf_Log\n", log_info);
+	
 	std::unique_lock<std::mutex> lck(Run_Main_Task_mut);
 	signal(SIGINT, Stop_Program);
 
-	my_log.alf_log_init("Melmac.log", log_debug, true);
-
+	mylog.alf_log_init("Melmac.log", log_debug, true);
+	
 	global_drive_info.speed = 42;
 	global_drive_info.acceleration = 43;
 	global_drive_info.lateral_acceleration = 44;
